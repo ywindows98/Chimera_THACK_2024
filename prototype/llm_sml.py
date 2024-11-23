@@ -8,7 +8,7 @@ import json
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import os
-from prototype.llm_func import use_llm
+from llm_func import use_llm
 
 
 if "initialized" not in st.session_state:
@@ -59,7 +59,7 @@ def read_plots(folder_path):
 def handle_message():
     query = st.session_state["user_input"]
     use_llm(query)
-    read_plots('prototype/figures')
+    read_plots('figures')
     if query.strip():
         # Add the user's message to the session state
         st.session_state.messages.append({"role": "user", "content": query})
@@ -223,11 +223,11 @@ with st.sidebar:
     st.subheader("🗨️ Chat History")
     for i, msg in enumerate(reversed(st.session_state.messages)):  # Reverse the message list
         if msg["role"] == "user":
-            user_avatar = "images/logo_min.jpg"
+            user_avatar = "../images/logo_min.jpg"
             with st.chat_message('User'):
                 st.write(msg["content"])
         else:
-            bot_avatar = "images/logo_min.jpg"
+            bot_avatar = "../images/logo_min.jpg"
             with st.chat_message('Bot', avatar=bot_avatar):
                 st.write(msg["content"])
 
