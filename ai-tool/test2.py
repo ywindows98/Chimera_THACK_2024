@@ -33,7 +33,7 @@ client = OpenAI(
 
 # Upload your pdf(s) to the OpenAI API
 file = client.files.create(
-    file=open('pdf_to_json.pdf', 'rb'),
+    file=open('../prototype/pdf_to_json.pdf', 'rb'),
     purpose='assistants'
 )
 

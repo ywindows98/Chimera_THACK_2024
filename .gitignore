@@ -1,6 +1,7 @@
 .idea
 .git
-venv/
 
-
+%SystemDrive%
+venv
+.env
 __pycache__
