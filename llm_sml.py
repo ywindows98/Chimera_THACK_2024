@@ -1,14 +1,14 @@
 # RUN WITH:
 # streamlit run llm_sml.py --server.address 127.0.0.1
 
+# RUN WITH:
+# streamlit run llm_sml.py --server.address 127.0.0.1
+
 import streamlit as st
 from streamlit_chat import message
 import pandas as pd
 import json
-import requests
 
-# Flask API URL
-FLASK_API_URL = 'http://127.0.0.1:5000/process_llm'  # Local URL, adjust if hosted differently
 
 # Page Configuration
 st.set_page_config(
@@ -32,24 +32,10 @@ def handle_message():
         # Add the user's message to the session state
         st.session_state.messages.append({"role": "user", "content": query})
 
-        # Prepare payload with optional uploaded data
+        # Prepare payload with optional uploaded data for potential backend
         payload = {"query": query}
         if st.session_state.uploaded_data is not None:
             payload["file_data"] = st.session_state.uploaded_data
-
-
-        # # Send the user input and optional file data to the Flask backend via POST request
-        # try:
-        #     response = requests.post(FLASK_API_URL, json=payload)
-        #     response_json = response.json()
-        #     bot_response = response_json.get("response", "Sorry, I couldn't process that.")
-        #
-        # except requests.exceptions.RequestException as e:
-        #     bot_response = "Error: Unable to connect to the backend."
-
-        # # Add the bot's response to the session state
-        # st.session_state.messages.append({"role": "bot", "content": bot_response})
-
 
         st.session_state.messages.append({"role": "bot", "content": f"Response to: {payload['query']}"})
 
@@ -101,6 +87,23 @@ for i, msg in enumerate(reversed(st.session_state.messages)):  # Reverse the mes
         message(msg["content"], is_user=True, key=f"user-{len(st.session_state.messages) - i}")
     else:
         message(msg["content"], key=f"bot-{len(st.session_state.messages) - i}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
