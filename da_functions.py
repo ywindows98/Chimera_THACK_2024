@@ -56,3 +56,11 @@ def categorize_data(df, column, bins=None, labels=None, one_hot_encode=False):
         df_categorized = pd.get_dummies(df_categorized, columns=[column], prefix=column)
 
     return df_categorized
+
+def plot_histogram(df, column):
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.histplot(df[column], kde=True, ax=ax)
+    ax.set_title(f"Histogram of {column}")
+    ax.set_xlabel(column)
+    ax.set_ylabel("Frequency")
+    return fig
