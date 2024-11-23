@@ -1,9 +1,6 @@
 # RUN WITH:
 # streamlit run llm_sml.py --server.address 127.0.0.1
 
-# RUN WITH:
-# streamlit run llm_sml.py --server.address 127.0.0.1
-
 import streamlit as st
 from streamlit_chat import message
 import pandas as pd
