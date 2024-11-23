@@ -88,14 +88,14 @@ class FileToTxtConverter:
             return "False"
 
 # Example usage
-file_paths = [
-    r"Iris.csv",
-    r"pdf_to_json.pdf",
-    r'sample1.json',
-    r'xlsx_to_txt.xlsx',
-    r'simple.txt'
+# file_paths = [
+#     r"Iris.csv",
+#     r"pdf_to_json.pdf",
+#     r'sample1.json',
+#     r'xlsx_to_txt.xlsx',
+#     r'simple.txt'
 
-]
+# ]
 
-for file_path in file_paths:
-    is_convert = FileToTxtConverter.convert_to_txt(file_path)
+# for file_path in file_paths:
+#     is_convert = FileToTxtConverter.convert_to_txt(file_path)
