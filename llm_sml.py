@@ -5,6 +5,8 @@ import streamlit as st
 from streamlit_chat import message
 import pandas as pd
 import json
+import matplotlib.pyplot as plt
+
 
 # Page Configuration
 st.set_page_config(
@@ -78,6 +80,13 @@ def update_plot_from_session():
         st.info("Upload a file to see data and plots.")
 
 
+# Function to display the passed figure
+def display_plot(fig):
+    if fig is not None:
+        st.pyplot(fig)
+    else:
+        st.warning("No figure provided to display.")
+
 # # This function is used to update the plot using the uploaded file directly
 # def update_plot(df):
 #     if df is not None:
@@ -134,12 +143,15 @@ with st.sidebar:
 
 # Main Area for Plotting
 st.header("Plotting Area")
-update_plot_from_session()  # This will now plot in the main area
+# update_plot_from_session()  # This will now plot in the main area
 
 
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.set_title(f"Histogram of test")
+ax.set_xlabel("testtest")
+ax.set_ylabel("Frequency")
 
-
-
+display_plot(fig)
 
 
 

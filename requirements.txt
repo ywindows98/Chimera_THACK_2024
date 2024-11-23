@@ -3,3 +3,4 @@ pandas
 streamlit
 streamlit_chat
 scipy
+matplotlib
