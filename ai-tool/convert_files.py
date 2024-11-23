@@ -104,6 +104,9 @@ class Converter:
 
         return df, attribute_names, data_types
 
+    @staticmethod
+    def get_format(file_path: str) -> str: 
+        return os.path.splitext(file_path)[1].lower()
 
 # Example usage
 # file_paths = [
@@ -119,9 +122,23 @@ class Converter:
 #     is_convert = Converter.convert_to_txt(file_path)
 
 file_path = 'data/Iris.txt'
-df, attribute_names, data_types = Converter.txt_to_dataframe(file_path)
+# df, attribute_names, data_types = Converter.txt_to_dataframe(file_path)
 
-print("Attribute Names:", attribute_names)
-print("Data Types:", data_types)
-print("DataFrame:")
-print(df)
+# print("Attribute Names:", attribute_names)
+# print("Data Types:", data_types)
+# print("DataFrame:")
+# print(df)
+
+
+# import pandas as pd #importing the pandas module
+# df = pd.read_excel(r'std.xlsx')
+# # displaying the columns of the df
+# df
+
+
+# import pandas as pd
+# df = pd.read_json('std.json')
+# df
+
+format = Converter.get_format('std.json')
+print(format)
