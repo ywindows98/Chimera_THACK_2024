@@ -37,6 +37,7 @@ For PDF files: Extract data using libraries like `PyPDF2`, `pdfplumber`, or `cam
 Focus on creating reusable, clean, and generalizable code for processing and visualizing the data. Do not hardcode datasets or outputs. Instead, rely on the provided file for all data inputs.
 """
 
-service_promt = """
+service_promt = f"""You have information about attributes, their data types, and possibly their descriptions. Using this information, you need to write code that strictly solves the task I will describe. 
+My atribbutes are: {0}. 
 
-"""
+Your task is """
