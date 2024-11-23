@@ -13,6 +13,7 @@ import matplotlib.image as mpimg
 st.set_page_config(
     page_title="Chimera LLM",
     layout="wide",  # Allows more space for plots
+    page_icon="images/logo_min.jpg"
 )
 
 st.markdown(
@@ -26,6 +27,9 @@ st.markdown(
         display: none;  /* Hide the label */
     }
     
+    .stChatMessage {
+        background-color: rgba(255, 255, 255, 0.0);  /* Hide the label */
+    }
     </style>
     """,
     unsafe_allow_html=True
