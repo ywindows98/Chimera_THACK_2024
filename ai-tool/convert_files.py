@@ -98,7 +98,11 @@ class Converter:
         # Извлечение типов данных из второй строки
         data_types = df.iloc[1].tolist()
 
-        return attribute_names, data_types
+        # Создание DataFrame с правильными названиями столбцов
+        df.columns = attribute_names
+        df = df.drop([0, 1]).reset_index(drop=True)
+
+        return df, attribute_names, data_types
 
 
 # Example usage
@@ -115,9 +119,9 @@ class Converter:
 #     is_convert = Converter.convert_to_txt(file_path)
 
 file_path = 'data/Iris.txt'
-attribute_names, data_types = Converter.txt_to_dataframe(file_path)
+df, attribute_names, data_types = Converter.txt_to_dataframe(file_path)
 
 print("Attribute Names:", attribute_names)
 print("Data Types:", data_types)
-# print("DataFrame:")
-# print(df)
+print("DataFrame:")
+print(df)
