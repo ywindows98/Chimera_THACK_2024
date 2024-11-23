@@ -9,41 +9,6 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 
-# Page Configuration
-st.set_page_config(
-    page_title="Chimera LLM",
-    layout="wide",  # Allows more space for plots
-    page_icon="images/logo_min.jpg"
-)
-
-st.markdown(
-    """
-    <style>
-    .stFileUploader label {
-        display: none;  /* Hide the label */
-    }
-    
-    .stTextArea label {
-        display: none;  /* Hide the label */
-    }
-    
-    .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.0);  /* Hide the label */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Title
-st.title("Chimera LLM Chat")
-
-# Initialize Chat History and Uploaded Data in Session State
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "uploaded_data" not in st.session_state:
-    st.session_state.uploaded_data = None
-
 # Input handler function
 def handle_message():
     query = st.session_state["user_input"]
@@ -108,10 +73,92 @@ def display_plot(fig):
     else:
         st.warning("No figure provided to display.")
 
+
+def simulate_test_plots():
+    for i in range(3):
+        plt.style.use('fivethirtyeight')
+        fig, ax = plt.subplots(figsize=(12, 8))
+        ax.set_title(f"Histogram of test{i}", fontsize=32)
+        ax.set_xlabel("testtest", fontsize=24)
+        ax.set_ylabel("Frequency", fontsize=24)
+
+        plt.savefig(f'test{i}.png', transparent=True)
+
+
+    paths = [f'test{i}.png' for i in range(3)]
+    plots = []
+    for path in paths:
+        img = mpimg.imread(path)
+        fig, ax = plt.subplots(figsize=(12, 8))
+        ax.imshow(img)
+        ax.axis('off')  # Turn off axis labels
+        fig.patch.set_alpha(0.0)  # Figure background
+        ax.patch.set_alpha(0.0)   # Axes background
+        ax.set_title(f"Histogram of test from file")
+
+        plots.append(fig)
+
+    st.session_state.plots = plots
+
+# Main Area for Plotting
+# st.header("Plotting Area")
+
+# Page Configuration
+st.set_page_config(
+    page_title="Chimera LLM",
+    layout="wide",  # Allows more space for plots
+    page_icon="images/logo_min.jpg"
+)
+
+st.markdown(
+    """
+    <style>
+    .stFileUploader label {
+        display: none;  /* Hide the label */
+    }
+
+    .stTextArea label {
+        display: none;  /* Hide the label */
+    }
+
+    .stChatMessage {
+        background-color: rgba(255, 255, 255, 0.0);  /* Hide the label */
+    }
+    
+    .stColumn {
+                text-align:center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Title
+st.title("Chimera LLM Chat")
+
+
+if "initialized" not in st.session_state:
+    st.session_state.initialized = True
+    # Initialize Chat History and Uploaded Data in Session State
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    if "uploaded_data" not in st.session_state:
+        st.session_state.uploaded_data = None
+    if "current_index" not in st.session_state:
+        st.session_state.current_index = 0
+    if "plots" not in st.session_state:
+        st.session_state.plots = []
+    if "prev_disabled" not in st.session_state:
+        st.session_state.prev_disabled = True
+    if "next_disabled" not in st.session_state:
+        st.session_state.next_disabled = True
+
+    simulate_test_plots()
+
+
 # Sidebar for File Upload and Chat
 with st.sidebar:
     # File Upload Section
-    st.header("📂 Upload a File")
     uploaded_file = st.file_uploader(
         "",
         # "Upload a CSV, JSON, PDF, TXT, XLSX or DOCX",
@@ -150,37 +197,34 @@ with st.sidebar:
                 st.write(msg["content"])
 
 
-# Main Area for Plotting
-st.header("Plotting Area")
 
-plt.style.use('fivethirtyeight')
-fig, ax = plt.subplots(figsize=(20, 10))
-ax.set_title(f"Histogram of test", fontsize=32)
-ax.set_xlabel("testtest", fontsize=32)
-ax.set_ylabel("Frequency", fontsize=32)
+if st.session_state.current_index > 0:
+    st.session_state.prev_disabled = False
+else:
+    st.session_state.prev_disabled = True
 
-plt.savefig('histogram_test.png', transparent=True)
+if st.session_state.current_index < len(st.session_state.plots) - 1:
+    st.session_state.next_disabled = False
+else:
+    st.session_state.next_disabled = True
 
-img = mpimg.imread('histogram_test.png')
+# Buttons to switch between figures
+col1, col2 = st.columns([1, 1])  # Create two columns for the buttons
+with col1:
+    if st.button("Previous Figure", disabled=st.session_state.prev_disabled):
+        if st.session_state.current_index > 0:
+            st.session_state.current_index -= 1
+        st.rerun()
 
-# Create a new figure to display the image
-fig, ax = plt.subplots(figsize=(20, 10))
+with col2:
+    if st.button("Next Figure", disabled=st.session_state.next_disabled):
+        if st.session_state.current_index < len(st.session_state.plots) - 1:
+            st.session_state.current_index += 1
+        st.rerun()
 
-# Display the image using imshow
-ax.imshow(img)
-ax.axis('off')  # Turn off axis labels
-fig.patch.set_alpha(0.0)  # Figure background
-ax.patch.set_alpha(0.0)   # Axes background
-# Optionally set the title or other properties
-ax.set_title("Histogram of test (from saved image)")
-
-display_plot(fig)
-
-
-
-
-
-
+# Display the current figure
+fig = st.session_state.plots[st.session_state.current_index]
+st.pyplot(fig)
 
 
 
