@@ -1,0 +1,9 @@
+Purchase Order: #12345  
+Date: 2024 -11-22 
+ 
+Items:  
+1. Product A    Quantity: 2    Price per unit: $25.50  
+2. Product B    Quantity: 1    Price per unit: $10.00  
+3. Product C    Quantity: 5    Price per unit: $7.20  
+ 
+Total Price: $123.45  
