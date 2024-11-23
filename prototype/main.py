@@ -12,7 +12,7 @@ token = os.getenv("OPENAI_API_KEY")
 organization_token = os.getenv("ORGANIZATION")
 model_name = "gpt-4o"
 
-file_path = 'co2.csv'
+file_path = 'students.csv'
 
 try:
     df = pd.read_csv(file_path)
@@ -57,7 +57,7 @@ thread = client.beta.threads.create(
   messages=[
     {
       "role": "user",
-      "content": "I want to see a bar graph of co2 emissions sorted by auto manufacturer"
+      "content": "I want to get a graph comparing average math scores sorted by the education level of the student's parents"
     },
     {
       "role": "user",
