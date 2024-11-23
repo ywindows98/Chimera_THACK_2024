@@ -6,12 +6,29 @@ from streamlit_chat import message
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 
 # Page Configuration
 st.set_page_config(
     page_title="Chimera LLM",
     layout="wide",  # Allows more space for plots
+)
+
+st.markdown(
+    """
+    <style>
+    .stFileUploader label {
+        display: none;  /* Hide the label */
+    }
+    
+    .stTextArea label {
+        display: none;  /* Hide the label */
+    }
+    
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 # Title
@@ -87,32 +104,14 @@ def display_plot(fig):
     else:
         st.warning("No figure provided to display.")
 
-# # This function is used to update the plot using the uploaded file directly
-# def update_plot(df):
-#     if df is not None:
-#         st.write("Data Preview:")
-#         st.dataframe(df.head())  # Display the first few rows of the data
-#
-#         st.write("Visualization Placeholder:")
-#         # Example: Plotting a simple histogram
-#         if isinstance(df, pd.DataFrame):
-#             numeric_columns = df.select_dtypes(include=['number']).columns
-#             if not numeric_columns.empty:
-#                 column_to_plot = st.selectbox("Select a column to plot:", numeric_columns)
-#                 st.bar_chart(df[column_to_plot])
-#             else:
-#                 st.warning("No numeric columns available for plotting.")
-#     else:
-#         st.info("Upload a file to see data and plots.")
-
-
 # Sidebar for File Upload and Chat
 with st.sidebar:
     # File Upload Section
     st.header("📂 Upload a File")
     uploaded_file = st.file_uploader(
-        "Upload a CSV or JSON file",
-        type=["csv", "json"]
+        "",
+        # "Upload a CSV, JSON, PDF, TXT, XLSX or DOCX",
+        type=["csv", "json", "pdf", "txt", "xlsx", "docx"]
     )
 
     # Trigger file upload processing after the file is selected
@@ -125,9 +124,10 @@ with st.sidebar:
         st.session_state["user_input"] = ""  # Initialize input field in session state
 
     st.text_area(
-        "Your question:",
+        "",
+        # "Your question:",
         value=st.session_state["user_input"],
-        placeholder="Ask me anything...",
+        placeholder="Make a request...",
         height=70,
         key="user_input",
         on_change=handle_message  # Trigger when Enter is pressed
@@ -137,19 +137,38 @@ with st.sidebar:
     st.subheader("🗨️ Chat History")
     for i, msg in enumerate(reversed(st.session_state.messages)):  # Reverse the message list
         if msg["role"] == "user":
-            message(msg["content"], is_user=True, key=f"user-{len(st.session_state.messages) - i}")
+            user_avatar = "images/logo_min.jpg"
+            with st.chat_message('User'):
+                st.write(msg["content"])
         else:
-            message(msg["content"], key=f"bot-{len(st.session_state.messages) - i}")
+            bot_avatar = "images/logo_min.jpg"
+            with st.chat_message('Bot', avatar=bot_avatar):
+                st.write(msg["content"])
+
 
 # Main Area for Plotting
 st.header("Plotting Area")
-# update_plot_from_session()  # This will now plot in the main area
 
+plt.style.use('fivethirtyeight')
+fig, ax = plt.subplots(figsize=(20, 10))
+ax.set_title(f"Histogram of test", fontsize=32)
+ax.set_xlabel("testtest", fontsize=32)
+ax.set_ylabel("Frequency", fontsize=32)
 
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.set_title(f"Histogram of test")
-ax.set_xlabel("testtest")
-ax.set_ylabel("Frequency")
+plt.savefig('histogram_test.png', transparent=True)
+
+img = mpimg.imread('histogram_test.png')
+
+# Create a new figure to display the image
+fig, ax = plt.subplots(figsize=(20, 10))
+
+# Display the image using imshow
+ax.imshow(img)
+ax.axis('off')  # Turn off axis labels
+fig.patch.set_alpha(0.0)  # Figure background
+ax.patch.set_alpha(0.0)   # Axes background
+# Optionally set the title or other properties
+ax.set_title("Histogram of test (from saved image)")
 
 display_plot(fig)
 
