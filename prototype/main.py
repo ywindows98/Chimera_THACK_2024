@@ -12,8 +12,10 @@ token = os.getenv("OPENAI_API_KEY")
 organization_token = os.getenv("ORGANIZATION")
 model_name = "gpt-4o"
 
+file_path = 'co2.csv'
+
 try:
-    df = pd.read_csv("dataset.csv")
+    df = pd.read_csv(file_path)
     attributes = [str(attr) for attr in df.columns.tolist()]
     data_types = [str(dtype) for dtype in df.dtypes.tolist()]
     result = ''
@@ -22,6 +24,7 @@ try:
 
 except Exception as e:
     print(e)
+    raise e
 
 print(result)
 
@@ -54,7 +57,7 @@ thread = client.beta.threads.create(
   messages=[
     {
       "role": "user",
-      "content": "I want to get a visualization of all features in a 3-dimensional graph. Make a different color for each species "
+      "content": "I want to see a bar graph of co2 emissions sorted by auto manufacturer"
     },
     {
       "role": "user",
@@ -78,9 +81,6 @@ messages_cursor = client.beta.threads.messages.list(thread_id=thread.id)
 messages = [message for message in messages_cursor]
 print(messages)
 
-file_path = 'dataset.csv'
-# user_query = "Please analyze this iris dataset and plot futures."
-
 pattern = r"```python\n(.*?)```"
 matches = re.findall(pattern, messages[0].content[0].text.value, re.DOTALL)
 output_file = "response_output.py"
@@ -96,5 +96,13 @@ file_content = re.sub(r"data_frame_path\s*=\s*'[^']*'", f'data_frame_path = "{fi
 # Записываем изменения обратно в файл
 with open(output_file, 'w') as file:
     file.write(file_content)
+
+folder_path = './figures'
+for filename in os.listdir(folder_path):
+    file_path = os.path.join(folder_path, filename)
+    if os.path.isfile(file_path):
+        os.remove(file_path)  # Удаляем файл
+    elif os.path.isdir(file_path):
+        os.rmdir(file_path)  # Удаляем пустую папку
 
 subprocess.run(["python", output_file])
