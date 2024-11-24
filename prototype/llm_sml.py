@@ -46,7 +46,6 @@ def like():
         with open(file_name, "r", encoding="utf-8") as file:
             for line in file:
                 gpt_code += line.strip()
-        # print("QUERYREC", st.session_state["query"])
         add_code_to_db(st.session_state["query"], gpt_code)
         st.session_state.code_added = True
 
@@ -98,6 +97,7 @@ def handle_message(is_new_query: bool = True):
             add_new_query = "Based on the previous request, please create a new graph with a different visualization style or perspective. Here's the original request: "
             add_new_query += query
             use_llm(add_new_query)
+            st.session_state.code_added = False
 
         read_plots('figures')
         if query.strip():
