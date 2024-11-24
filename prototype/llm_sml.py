@@ -92,13 +92,15 @@ def read_plots(folder_path):
 
 # Input handler function
 def handle_message(is_new_query: bool = True):
-    file_path = f"default/{st.session_state.default_data_name}"
+    # file_path = f"default/{st.session_state.default_data_name}"
+    file_path = None
     bot_message = "Response generated!"
 
     if os.path.exists("user_dataset/current_data.csv"):
         file_path = "user_dataset/current_data.csv"
     if is_new_query:
         query = st.session_state["user_input"]
+
         send_query(file_path=file_path, prompt=query)
         st.session_state["query"] = ""  # Clear the previous query
         st.session_state.code_added = False # Reset the code added flag
