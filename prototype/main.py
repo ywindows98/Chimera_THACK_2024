@@ -122,6 +122,7 @@ def create_py_file(messages, file_path):
 
     # Write the extracted code to a Python file
     with open(output_file, 'w', encoding='utf-8') as f:
+        f.write("import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n")
         f.write(matches[0])
 
     # Replace placeholder file path in the code with the actual dataset file path
