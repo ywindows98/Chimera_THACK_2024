@@ -2,19 +2,39 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-data_frame_path = "default/default_data.csv"
+data_frame_path = "default/Bird_strikes.csv"
+
 df = pd.read_csv(data_frame_path)
 
-# Calculate mean math and writing scores by parental education level
-mean_scores = df.groupby('parental_level_of_education')[['math_score', 'writing_score']].mean()
-
-# Plot bar graph
-ax = mean_scores.plot(kind='bar', figsize=(10, 6))
-plt.title('Average Math and Writing Scores by Parental Level of Education')
-plt.xlabel('Parental Level of Education')
-plt.ylabel('Average Score')
+# Plot 1: Incidents by Aircraft Type
+plt.figure(figsize=(10, 6))
+df['AircraftType'].value_counts().plot(kind='bar')
+plt.title('Number of Incidents by Aircraft Type')
+plt.xlabel('Aircraft Type')
+plt.ylabel('Number of Incidents')
 plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig('./figures/incidents_by_aircraft_type.png', transparent=True)
+plt.close()
 
-# Save figure
-plt.savefig('./figures/average_scores_by_parental_education.png', transparent=True)
-plt.show()
+# Plot 2: Wildlife Strikes by Wildlife Species
+plt.figure(figsize=(10, 6))
+df['WildlifeSpecies'].value_counts().head(10).plot(kind='bar')
+plt.title('Top 10 Wildlife Strikes by Species')
+plt.xlabel('Wildlife Species')
+plt.ylabel('Number of Strikes')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig('./figures/wildlife_strikes_by_species.png', transparent=True)
+plt.close()
+
+# Plot 3: Damage Distribution
+plt.figure(figsize=(10, 6))
+df['Damage'].value_counts().plot(kind='bar')
+plt.title('Distribution of Damage Levels')
+plt.xlabel('Damage Level')
+plt.ylabel('Frequency')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig('./figures/damage_distribution.png', transparent=True)
+plt.close()

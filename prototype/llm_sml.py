@@ -1,5 +1,5 @@
 # RUN WITH:
-# streamlit run llm_sml.py --server.address 127.0.0.1
+# streamlit run llm_sml.py --theme.base="light" --server.address 127.0.0.1
 
 import streamlit as st
 from streamlit_chat import message
@@ -36,6 +36,8 @@ if "initialized" not in st.session_state:
         st.session_state.code_added = False
     if os.path.exists("user_dataset/current_data.csv"):
         os.remove("user_dataset/current_data.csv")
+    if "default_data_name" not in st.session_state:
+        st.session_state.default_data_name = "students.csv"
 
 #  "Like implementation"
 def like():
@@ -86,7 +88,7 @@ def read_plots(folder_path):
 
 # Input handler function
 def handle_message(is_new_query: bool = True):
-    file_path = "default/default_data.csv"
+    file_path = f"default/{st.session_state.default_data_name}"
     bot_message = "Response generated!"
     if os.path.exists("user_dataset/current_data.csv"):
         file_path = "user_dataset/current_data.csv"
@@ -240,7 +242,19 @@ with st.sidebar:
     if uploaded_file is not None:
         handle_file_upload(uploaded_file)
     else:
-        st.write("Custom dataset is not uploaded. A default dataset will be used.")
+        st.write("Custom dataset is not uploaded. Choose a default dataset.")
+
+        switch = st.selectbox("Chosen default dataset", ("Students", "Bird Strikes", "Exercise Tracking", "Medicine"))
+
+        # Display the current state
+        if switch == "Students":
+            st.session_state.default_data_name = "students.csv"
+        elif switch == "Bird Strikes":
+            st.session_state.default_data_name = "Bird_strikes.csv"
+        elif switch == "Exercise Tracking":
+            st.session_state.default_data_name = "gym_members_exercise_tracking.csv"
+        elif switch == "Medicine":
+            st.session_state.default_data_name = "Medicine_Details.csv"
 
     # Chat Input Section
     st.subheader("💬 Chat")
