@@ -15,5 +15,5 @@ def create_db() -> None:
 def add_code_to_db(prompt: str, code: str, mark: bool) -> None:
     with sq.connect("database.db") as conn:
         cur = conn.cursor()
-        cur.execute("INSERT INTO code_snippets (prompt, gpt_code) VALUES (?, ?, ?)", (prompt, code, mark))
+        cur.execute("INSERT INTO code_snippets (prompt, gpt_code, mark) VALUES (?, ?, ?)", (prompt, code, mark))
         conn.commit()
