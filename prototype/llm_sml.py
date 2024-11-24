@@ -48,13 +48,22 @@ def like():
         with open(file_name, "r", encoding="utf-8") as file:
             for line in file:
                 gpt_code += line.strip()
-        add_code_to_db(st.session_state["query"], gpt_code)
+        add_code_to_db(st.session_state["query"], gpt_code, 1)
         st.session_state.code_added = True
 
 #  "Dislike implementation"
 def dislike():
     st.session_state.liked = False
     st.session_state.disliked = True
+
+    if not st.session_state.code_added:
+        file_name = "response_output.py"
+        gpt_code = str()
+        with open(file_name, "r", encoding="utf-8") as file:
+            for line in file:
+                gpt_code += line.strip()
+        add_code_to_db(st.session_state["query"], gpt_code, 0)
+        st.session_state.code_added = True
 
 
 def read_plots(folder_path):
