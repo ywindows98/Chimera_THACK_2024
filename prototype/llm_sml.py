@@ -26,6 +26,11 @@ if "initialized" not in st.session_state:
         st.session_state.prev_disabled = True
     if "next_disabled" not in st.session_state:
         st.session_state.next_disabled = True
+    if "user_input" not in st.session_state:
+        st.session_state["user_input"] = ""
+    if os.path.exists("current_data.csv"):
+        os.remove("current_data.csv")
+
 
 def read_plots(folder_path):
 
@@ -60,6 +65,7 @@ def handle_message():
     if not os.path.exists("current_data.csv"):
         st.session_state.messages.append({"role": "bot", "content": f"Please upload a file to use an assistant"})
     else:
+        print("exists")
         query = st.session_state["user_input"]
         use_llm(query)
         read_plots('figures')
@@ -155,7 +161,16 @@ def simulate_test_plots():
     st.session_state.plots = plots
 
 
+def update_buttons():
+    if st.session_state.current_index > 0:
+        st.session_state.prev_disabled = False
+    else:
+        st.session_state.prev_disabled = True
 
+    if st.session_state.current_index < len(st.session_state.plots) - 1:
+        st.session_state.next_disabled = False
+    else:
+        st.session_state.next_disabled = True
 # Main Area for Plotting
 # st.header("Plotting Area")
 
@@ -192,11 +207,6 @@ st.markdown(
 # Title
 st.title("Chimera LLM Chat")
 
-
-    # read_plots('prototype/figures')
-    # simulate_test_plots()
-
-
 # Sidebar for File Upload and Chat
 with st.sidebar:
     # File Upload Section
@@ -212,8 +222,6 @@ with st.sidebar:
 
     # Chat Input Section
     st.subheader("💬 Chat")
-    if "user_input" not in st.session_state:
-        st.session_state["user_input"] = ""  # Initialize input field in session state
 
     st.text_area(
         "",
@@ -238,17 +246,7 @@ with st.sidebar:
                 st.write(msg["content"])
 
 
-
-if st.session_state.current_index > 0:
-    st.session_state.prev_disabled = False
-else:
-    st.session_state.prev_disabled = True
-
-if st.session_state.current_index < len(st.session_state.plots) - 1:
-    st.session_state.next_disabled = False
-else:
-    st.session_state.next_disabled = True
-
+update_buttons()
 # Buttons to switch between figures
 col1, col2 = st.columns([1, 1])  # Create two columns for the buttons
 with col1:
