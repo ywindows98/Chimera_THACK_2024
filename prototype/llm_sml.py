@@ -57,12 +57,18 @@ def read_plots(folder_path):
 
 
 # Input handler function
-def handle_message():
+def handle_message(is_new_query: bool = True):
     if not os.path.exists("current_data.csv"):
         st.session_state.messages.append({"role": "bot", "content": f"Please upload a file to use an assistant"})
     else:
-        query = st.session_state["user_input"]
-        use_llm(query)
+        if is_new_query:
+            query = st.session_state["user_input"]
+            use_llm(query)
+            st.session_state["query"] = ""  # Clear the previous query
+        else:
+            query = st.session_state["query"]
+            use_llm(query)
+
         read_plots('figures')
         if query.strip():
             # Add the user's message to the session state
@@ -77,7 +83,9 @@ def handle_message():
             st.session_state.messages.append({"role": "bot", "content": f"Response to: {payload['query']}"})
 
             # Clear the input field
-            st.session_state["user_input"] = ""
+            if is_new_query:
+                st.session_state["query"] = query
+                st.session_state["user_input"] = ""
 
 
 # File upload handler
@@ -207,7 +215,7 @@ st.markdown(
 )
 
 # Title
-st.title("Chimera LLM Chat")
+st.title("🦁 Chimera LLM Chat ")
 
 
     # read_plots('prototype/figures')
@@ -231,6 +239,8 @@ with st.sidebar:
     st.subheader("💬 Chat")
     if "user_input" not in st.session_state:
         st.session_state["user_input"] = ""  # Initialize input field in session state
+    if "query" not in st.session_state:
+        st.session_state["query"] = False
 
     st.text_area(
         "",
@@ -253,8 +263,6 @@ with st.sidebar:
             bot_avatar = "../images/logo_min.jpg"
             with st.chat_message('Bot', avatar=bot_avatar):
                 st.write(msg["content"])
-
-
 
 if st.session_state.current_index > 0:
     st.session_state.prev_disabled = False
@@ -285,27 +293,8 @@ if len(st.session_state.plots)>0:
     fig = st.session_state.plots[st.session_state.current_index]
     st.pyplot(fig)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # Buttons for regenerate
+    if st.button("Regenerate Figures"):
+        handle_message(False)
+        st.rerun()
 
