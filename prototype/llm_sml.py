@@ -43,33 +43,46 @@ if "initialized" not in st.session_state:
     if not os.path.exists("figures"):
         os.makedirs("figures")
 
-#  "Like implementation"
+# "Add to database"
+def add_to_db(mark) :
+    file_name = "response_output.py"
+    gpt_code = str()
+    with open(file_name, "r", encoding="utf-8") as file:
+        for line in file:
+            gpt_code += line.strip()
+    add_code_to_db(st.session_state["query"], gpt_code, 0)
+    st.session_state.code_added = True
+
+# "Like implementation"
 def like():
-    st.session_state.liked = True
-    st.session_state.disliked = False
+    if not st.session_state.liked:  # Avoid redundant actions
+        st.session_state.liked = True
+        st.session_state.disliked = False
+        if not st.session_state.code_added:
+            add_to_db(1)
 
-    if not st.session_state.code_added:
-        file_name = "response_output.py"
-        gpt_code = str()
-        with open(file_name, "r", encoding="utf-8") as file:
-            for line in file:
-                gpt_code += line.strip()
-        add_code_to_db(st.session_state["query"], gpt_code, 1)
-        st.session_state.code_added = True
-
-#  "Dislike implementation"
+# "Dislike implementation"
 def dislike():
-    st.session_state.liked = False
-    st.session_state.disliked = True
+    if not st.session_state.disliked:  # Avoid redundant actions
+        st.session_state.liked = False
+        st.session_state.disliked = True
+        if not st.session_state.code_added:
+            add_to_db(0)
 
-    if not st.session_state.code_added:
-        file_name = "response_output.py"
-        gpt_code = str()
-        with open(file_name, "r", encoding="utf-8") as file:
-            for line in file:
-                gpt_code += line.strip()
-        add_code_to_db(st.session_state["query"], gpt_code, 0)
-        st.session_state.code_added = True
+
+# "Dislike implementation"
+def dislike():
+    if not st.session_state.disliked:  # Avoid redundant actions
+        st.session_state.liked = False
+        st.session_state.disliked = True
+        if not st.session_state.code_added:
+            file_name = "response_output.py"
+            gpt_code = str()
+            with open(file_name, "r", encoding="utf-8") as file:
+                for line in file:
+                    gpt_code += line.strip()
+            add_code_to_db(st.session_state["query"], gpt_code, 0)
+            st.session_state.code_added = True
 
 
 def read_plots(folder_path):
@@ -110,15 +123,16 @@ def handle_message(is_new_query: bool = True):
         query = st.session_state["user_input"]
         send_query(file_path=file_path, prompt=query)
         st.session_state["query"] = ""  # Clear the previous query
-        st.session_state.code_added = False # Reset the code added flag
-
     else:
         query = st.session_state["query"]
         bot_message = "Figures regenerated!"
         add_new_query = "Based on the previous request, please create a new graph with a different visualization style or perspective. Here's the original request: "
         add_new_query += query
         send_query(file_path=file_path, prompt=add_new_query)
-        st.session_state.code_added = False
+
+    st.session_state.code_added = False
+    st.session_state.liked = False
+    st.session_state.disliked = False
 
     read_plots('figures')
     if query.strip():
@@ -337,10 +351,24 @@ if len(st.session_state.plots) > 0:
             handle_message(False)
             st.rerun()
     with col4:
-        if st.button("👍", on_click=like):
+        st.button(
+            "👍", 
+            key='like', 
+            on_click=like, 
+            disabled=st.session_state.liked or st.session_state.disliked
+        )
+        if st.session_state.liked:
             st.write("You liked the figure!")
+
     with col5:
-        if st.button("👎", on_click=dislike):
+        st.button(
+            "👎", 
+            key='dislike', 
+            on_click=dislike, 
+            disabled=st.session_state.liked or st.session_state.disliked
+        )
+        if st.session_state.disliked:
             st.write("You disliked the figure!")
+
     
 
