@@ -150,10 +150,25 @@ def create_py_file(messages, file_path):
 # Function to handle the query, process the dataset, and interact with the OpenAI API
 def send_query(file_path, prompt, model_name="gpt-4o"):
     # Validate inputs
-    if type(file_path) is not str:
-        raise FileNotFoundError("Wrong file path.")
+    # if type(file_path) is not str:
+    #     raise FileNotFoundError("Wrong file path.")
     if type(prompt) is not str:
-        raise TypeError("Wrong propt type.")
+        raise TypeError("Wrong prompt type.")
+
+    if file_path is None:
+        dataset_pattern = {
+            "student": "./example_datasets/students.csv",
+            "co2": "./example_datasets/co2.csv",
+            "iris": "./example_datasets/iris.csv"
+        }
+
+        try:
+            for dataset_name, dataset_path in dataset_pattern.items():
+                if re.search(dataset_name, prompt):
+                    file_path = dataset_path
+                    break
+        except Exception as e:
+            raise e
 
     # Create a User object with the given prompt and file path
     user = User(prompt=prompt, file_path=file_path)
