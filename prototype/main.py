@@ -158,8 +158,13 @@ def send_query(file_path, prompt, model_name="gpt-4o"):
     if file_path is None:
         dataset_pattern = {
             "student": "./example_datasets/students.csv",
+            "math": "./example_datasets/students.csv",
             "co2": "./example_datasets/co2.csv",
-            "iris": "./example_datasets/iris.csv"
+            "cars": "./example_datasets/co2.csv",
+            "fuel": "./example_datasets/co2.csv",
+            "iris": "./example_datasets/iris.csv",
+            "films": "./example_datasets/imdb.csv",
+            "imdb": "./example_datasets/imdb.csv"
         }
 
         try:
