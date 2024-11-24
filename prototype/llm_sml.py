@@ -183,32 +183,6 @@ def display_plot(fig):
         st.warning("No figure provided to display.")
 
 
-def simulate_test_plots():
-    for i in range(3):
-        plt.style.use('fivethirtyeight')
-        fig, ax = plt.subplots(figsize=(12, 8))
-        ax.set_title(f"Histogram of test{i}", fontsize=32)
-        ax.set_xlabel("testtest", fontsize=24)
-        ax.set_ylabel("Frequency", fontsize=24)
-
-        plt.savefig(f'test{i}.png', transparent=True)
-
-    paths = [f'test{i}.png' for i in range(3)]
-    plots = []
-    for path in paths:
-        img = mpimg.imread(path)
-        fig, ax = plt.subplots(figsize=(12, 8))
-        ax.imshow(img)
-        ax.axis('off')  # Turn off axis labels
-        fig.patch.set_alpha(0.0)  # Figure background
-        ax.patch.set_alpha(0.0)  # Axes background
-        ax.set_title(f"Histogram of test from file")
-
-        plots.append(fig)
-
-    st.session_state.plots = plots
-
-
 # Main Area for Plotting
 # st.header("Plotting Area")
 
