@@ -5,6 +5,7 @@ import re
 import subprocess
 import os
 import sys
+from convert_files import Converter
 
 # A class representing a client to interact with OpenAI API
 class Client:
@@ -94,6 +95,15 @@ def run(client, thread, assistant: Assistant.get_assistant, timeout: int):
 # Function to load a dataset and extract its attributes and data types
 def load_dataset(file_path: str):
     try:
+        # is_convert = Converter.convert_to_txt(file_path)
+        # format = Converter.get_format(file_path)
+        # print("File Format: ", format)
+        # df, _, _ = Converter.file_to_dataframe(file_path, format)
+        # print("Attribute Names:", attribute_names)
+        # print("Data Types:", data_types)
+        # print("Is DataFrame:", type(df))
+        # print("DataFrame:")
+        # print(df)
         df = pd.read_csv(file_path) # Load the dataset as a pandas DataFrame
         print(f"Dataset {file_path} read success")
         attributes = [str(attr) for attr in df.columns.tolist()] # Column names

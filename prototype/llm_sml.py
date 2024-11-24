@@ -251,7 +251,7 @@ with st.sidebar:
     uploaded_file = st.file_uploader(
         "",
         # "Upload a CSV, JSON, PDF, TXT, XLSX or DOCX",
-        type=["csv", "json", "pdf", "txt", "xlsx", "docx"]
+        type=["csv"]
     )
 
     # Trigger file upload processing after the file is selected
