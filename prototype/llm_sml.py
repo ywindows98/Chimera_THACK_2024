@@ -258,19 +258,8 @@ with st.sidebar:
     if uploaded_file is not None:
         handle_file_upload(uploaded_file)
     else:
-        st.write("Custom dataset is not uploaded. Choose a default dataset.")
+        st.write("Custom dataset is not uploaded. Mention the default dataset name in the query if you want yo use it.")
 
-        switch = st.selectbox("Chosen default dataset", ("Students", "Bird Strikes", "Exercise Tracking", "Medicine"))
-
-        # Display the current state
-        if switch == "Students":
-            st.session_state.default_data_name = "students.csv"
-        elif switch == "Bird Strikes":
-            st.session_state.default_data_name = "Bird_strikes.csv"
-        elif switch == "Exercise Tracking":
-            st.session_state.default_data_name = "gym_members_exercise_tracking.csv"
-        elif switch == "Medicine":
-            st.session_state.default_data_name = "Medicine_Details.csv"
 
     # Chat Input Section
     st.subheader("💬 Chat")
