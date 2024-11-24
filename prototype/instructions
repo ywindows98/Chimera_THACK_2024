@@ -1,7 +1,7 @@
 "1) Dont use seadorn. "
 "2) Use matplotlib and pandas, numpy for data analys. "
 "3) Write code on python in one block. "
-"4) Write only code, without description. "
+"4) Write code, and a short description of the analysis date. "
 "5) Always Make and save allways figures in png file plt.savefig('./figures/'+file_name, transparent=True) with unique file_name. "
 "6) Take into account that you don't know how many elements are in the dataframe, write a universal code that will work with any amount of data in the dataframe. "
 "7) Do not create any mockup of the potential dataset. "
