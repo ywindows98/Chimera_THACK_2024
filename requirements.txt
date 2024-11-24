@@ -4,3 +4,6 @@ streamlit
 streamlit_chat
 scipy
 matplotlib
+openai
+dotenv
+sqlite3
