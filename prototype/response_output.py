@@ -1,40 +1,34 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 
-data_frame_path = "default/Bird_strikes.csv"
+data_frame_path = "user_dataset/current_data.csv"
 
+# Load data
 df = pd.read_csv(data_frame_path)
 
-# Plot 1: Incidents by Aircraft Type
-plt.figure(figsize=(10, 6))
-df['AircraftType'].value_counts().plot(kind='bar')
-plt.title('Number of Incidents by Aircraft Type')
-plt.xlabel('Aircraft Type')
-plt.ylabel('Number of Incidents')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.savefig('./figures/incidents_by_aircraft_type.png', transparent=True)
-plt.close()
+# Unique species
+species = df['Species'].unique()
 
-# Plot 2: Wildlife Strikes by Wildlife Species
-plt.figure(figsize=(10, 6))
-df['WildlifeSpecies'].value_counts().head(10).plot(kind='bar')
-plt.title('Top 10 Wildlife Strikes by Species')
-plt.xlabel('Wildlife Species')
-plt.ylabel('Number of Strikes')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.savefig('./figures/wildlife_strikes_by_species.png', transparent=True)
-plt.close()
+# Colors for species
+colors = plt.cm.get_cmap('viridis', len(species))(np.arange(len(species)))
 
-# Plot 3: Damage Distribution
-plt.figure(figsize=(10, 6))
-df['Damage'].value_counts().plot(kind='bar')
-plt.title('Distribution of Damage Levels')
-plt.xlabel('Damage Level')
-plt.ylabel('Frequency')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.savefig('./figures/damage_distribution.png', transparent=True)
-plt.close()
+# Create 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot each species
+for idx, spec in enumerate(species):
+    species_data = df[df['Species'] == spec]
+    ax.scatter(species_data['SepalLengthCm'], species_data['SepalWidthCm'], species_data['PetalLengthCm'], 
+               color=colors[idx], label=spec)
+
+# Labels and legend
+ax.set_xlabel('Sepal Length (cm)')
+ax.set_ylabel('Sepal Width (cm)')
+ax.set_zlabel('Petal Length (cm)')
+ax.legend(loc='best')
+
+# Save the plot
+plt.savefig('./figures/3d_scatter_plot.png', transparent=True)
