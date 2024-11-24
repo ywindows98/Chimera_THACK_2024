@@ -57,23 +57,26 @@ def read_plots(folder_path):
 
 # Input handler function
 def handle_message():
-    query = st.session_state["user_input"]
-    use_llm(query)
-    read_plots('figures')
-    if query.strip():
-        # Add the user's message to the session state
-        st.session_state.messages.append({"role": "user", "content": query})
+    if not os.path.exists("current_data.csv"):
+        st.session_state.messages.append({"role": "bot", "content": f"Please upload a file to use an assistant"})
+    else:
+        query = st.session_state["user_input"]
+        use_llm(query)
+        read_plots('figures')
+        if query.strip():
+            # Add the user's message to the session state
+            st.session_state.messages.append({"role": "user", "content": query})
 
-        # Prepare payload with optional uploaded data for potential backend
-        payload = {"query": query}
-        if st.session_state.uploaded_data is not None:
-            payload["file_data"] = st.session_state.uploaded_data
+            # Prepare payload with optional uploaded data for potential backend
+            payload = {"query": query}
+            if st.session_state.uploaded_data is not None:
+                payload["file_data"] = st.session_state.uploaded_data
 
-        # Mock response
-        st.session_state.messages.append({"role": "bot", "content": f"Response to: {payload['query']}"})
+            # Mock response
+            st.session_state.messages.append({"role": "bot", "content": f"Response to: {payload['query']}"})
 
-        # Clear the input field
-        st.session_state["user_input"] = ""
+            # Clear the input field
+            st.session_state["user_input"] = ""
 
 
 # File upload handler
@@ -83,11 +86,14 @@ def handle_file_upload(uploaded_file):
             # Handle CSV files
             if uploaded_file.name.endswith(".csv"):
                 df = pd.read_csv(uploaded_file)
+                df.to_csv("current_data.csv", index=False)
 
             # Handle JSON files
             elif uploaded_file.name.endswith(".json"):
                 data = json.load(uploaded_file)
                 df = pd.DataFrame(data)
+                df.to_csv("current_data.csv", index=False)
+
 
             st.session_state.uploaded_data = df  # Store uploaded data in session state
             st.sidebar.success(f"File '{uploaded_file.name}' uploaded successfully!")

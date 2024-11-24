@@ -54,7 +54,7 @@ thread = client.beta.threads.create(
   messages=[
     {
       "role": "user",
-      "content": "I want to get a visualization of all features in a 3-dimensional graph. Make a different color for each species "
+      "content": "I want to see a bar graph comparing math and writing grades as a function of parental education. And That the xlabel be sprayed at a 45 degree angle"
     },
     {
       "role": "user",
