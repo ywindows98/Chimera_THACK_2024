@@ -157,6 +157,8 @@ def create_py_file(messages, file_path):
     # Execute the Python file
     subprocess.run(["python", output_file])
 
+    return messages[0].content[0].text.value
+
 # Function to handle the query, process the dataset, and interact with the OpenAI API
 def send_query(file_path, prompt, model_name="gpt-4o"):
     # Validate inputs
@@ -170,7 +172,7 @@ def send_query(file_path, prompt, model_name="gpt-4o"):
             "student": "./example_datasets/students.csv",
             "math": "./example_datasets/students.csv",
             "co2": "./example_datasets/co2.csv",
-            "cars": "./example_datasets/co2.csv",
+            "car": "./example_datasets/co2.csv",
             "fuel": "./example_datasets/co2.csv",
             "iris": "./example_datasets/iris.csv",
             "films": "./example_datasets/imdb.csv",
@@ -225,12 +227,13 @@ def send_query(file_path, prompt, model_name="gpt-4o"):
     # Get the response messages from the thread
     response = client.beta.threads.messages.list(thread_id=thread.get_thread().id)
     print("Response get")
+    print(response)
     messages = [message for message in response]
 
     # Create a Python file from the response and execute it
-    create_py_file(messages=messages, file_path=file_path)
+    massage_for_user = create_py_file(messages=messages, file_path=file_path)
 
-    return 1
+    return massage_for_user
 
 # if __name__ == "__main__":
 #     prompt = "I want to see a bar graph comparing math and writing grades as a function of parental education. And That the xlabel be sprayed at a 45 degree angle"
