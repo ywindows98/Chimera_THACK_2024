@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import os
 from llm_func import use_llm
+from convert_files import Converter
 
 
 if "initialized" not in st.session_state:
@@ -84,17 +85,33 @@ def handle_file_upload(uploaded_file):
     if uploaded_file is not None:
         try:
             # Handle CSV files
-            if uploaded_file.name.endswith(".csv"):
-                df = pd.read_csv(uploaded_file)
-                df.to_csv("current_data.csv", index=False)
+            # if uploaded_file.name.endswith(".csv"):
+            #     df = pd.read_csv(uploaded_file)
+            #     df.to_csv("current_data.csv", index=False)
 
             # Handle JSON files
-            elif uploaded_file.name.endswith(".json"):
-                data = json.load(uploaded_file)
-                df = pd.DataFrame(data)
+            # elif uploaded_file.name.endswith(".json"):
+            #     data = json.load(uploaded_file)
+            #     df = pd.DataFrame(data)
+            #     df.to_csv("current_data.csv", index=False)
+
+            # Saving the uploaded file
+            with open(uploaded_file.name, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+
+            # Getting file path and format
+            file_path = uploaded_file.name
+            file_format = '.' + file_path.split('.')[-1]
+
+            # Convert file to txt
+            if file_format == 'pdf' or file_format == 'docx':
+                _ = Converter.pdf_to_txt(uploaded_file, "current_data.txt")
+                df, _, _ = Converter.file_to_dataframe("current_data.txt", "txt")
                 df.to_csv("current_data.csv", index=False)
-
-
+            else: 
+                df, _, _ = Converter.file_to_dataframe(file_path, file_format)
+                df.to_csv("current_data.csv", index=False)
+            
             st.session_state.uploaded_data = df  # Store uploaded data in session state
             st.sidebar.success(f"File '{uploaded_file.name}' uploaded successfully!")
         except Exception as e:
