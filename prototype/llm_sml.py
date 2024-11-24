@@ -10,9 +10,11 @@ import matplotlib.image as mpimg
 import os
 from llm_func import use_llm
 from convert_files import Converter
+from database import create_db, add_code_to_db
 
 if "initialized" not in st.session_state:
     st.session_state.initialized = True
+    create_db()  # Create Database
     # Initialize Chat History and Uploaded Data in Session State
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -26,6 +28,32 @@ if "initialized" not in st.session_state:
         st.session_state.prev_disabled = True
     if "next_disabled" not in st.session_state:
         st.session_state.next_disabled = True
+    if "liked" not in st.session_state:
+        st.session_state.liked = False
+    if "disliked" not in st.session_state:
+        st.session_state.disliked = False
+    if "code_added" not in st.session_state:
+        st.session_state.code_added = False
+
+#  "👍"
+def like():
+    st.session_state.liked = True
+    st.session_state.disliked = False
+
+    if not st.session_state.code_added:
+        file_name = "response_output.py"
+        gpt_code = str()
+        with open(file_name, "r", encoding="utf-8") as file:
+            for line in file:
+                gpt_code += line.strip()
+        # print("QUERYREC", st.session_state["query"])
+        add_code_to_db(st.session_state["query"], gpt_code)
+        st.session_state.code_added = True
+
+#  "👎"
+def dislike():
+    st.session_state.liked = False
+    st.session_state.disliked = True
 
 
 def read_plots(folder_path):
@@ -64,9 +92,12 @@ def handle_message(is_new_query: bool = True):
             query = st.session_state["user_input"]
             use_llm(query)
             st.session_state["query"] = ""  # Clear the previous query
+            st.session_state.code_added = False # Reset the code added flag
         else:
             query = st.session_state["query"]
-            use_llm(query)
+            add_new_query = "Based on the previous request, please create a new graph with a different visualization style or perspective. Here's the original request: "
+            add_new_query += query
+            use_llm(add_new_query)
 
         read_plots('figures')
         if query.strip():
@@ -237,6 +268,7 @@ with st.sidebar:
         st.session_state["user_input"] = ""  # Initialize input field in session state
     if "query" not in st.session_state:
         st.session_state["query"] = False
+    
 
     st.text_area(
         "",
@@ -289,8 +321,18 @@ if len(st.session_state.plots) > 0:
     fig = st.session_state.plots[st.session_state.current_index]
     st.pyplot(fig)
 
-    # Buttons for regenerate
-    if st.button("Regenerate Figures"):
-        handle_message(False)
-        st.rerun()
+    col3, col4, col5, _ = st.columns([1, 1, 0.5, 5])
+    with col3:
+        # Buttons for regenerate
+        if st.button("Regenerate Figures", on_click=like):
+
+            handle_message(False)
+            st.rerun()
+    with col4:
+        if st.button("👍", on_click=like):
+            st.write("You liked the figure!")
+    with col5:
+        if st.button("👎", on_click=dislike):
+            st.write("You disliked the figure!")
+    
 
