@@ -11,7 +11,6 @@ import os
 from llm_func import use_llm
 from convert_files import Converter
 
-
 if "initialized" not in st.session_state:
     st.session_state.initialized = True
     # Initialize Chat History and Uploaded Data in Session State
@@ -28,8 +27,8 @@ if "initialized" not in st.session_state:
     if "next_disabled" not in st.session_state:
         st.session_state.next_disabled = True
 
-def read_plots(folder_path):
 
+def read_plots(folder_path):
     # List to hold images
     images = []
     plots = []
@@ -116,10 +115,10 @@ def handle_file_upload(uploaded_file):
                 _ = Converter.pdf_to_txt(uploaded_file, "current_data.txt")
                 df, _, _ = Converter.file_to_dataframe("current_data.txt", "txt")
                 df.to_csv("current_data.csv", index=False)
-            else: 
+            else:
                 df, _, _ = Converter.file_to_dataframe(file_path, file_format)
                 df.to_csv("current_data.csv", index=False)
-            
+
             st.session_state.uploaded_data = df  # Store uploaded data in session state
             st.sidebar.success(f"File '{uploaded_file.name}' uploaded successfully!")
         except Exception as e:
@@ -163,7 +162,6 @@ def simulate_test_plots():
 
         plt.savefig(f'test{i}.png', transparent=True)
 
-
     paths = [f'test{i}.png' for i in range(3)]
     plots = []
     for path in paths:
@@ -172,13 +170,12 @@ def simulate_test_plots():
         ax.imshow(img)
         ax.axis('off')  # Turn off axis labels
         fig.patch.set_alpha(0.0)  # Figure background
-        ax.patch.set_alpha(0.0)   # Axes background
+        ax.patch.set_alpha(0.0)  # Axes background
         ax.set_title(f"Histogram of test from file")
 
         plots.append(fig)
 
     st.session_state.plots = plots
-
 
 
 # Main Area for Plotting
@@ -205,7 +202,7 @@ st.markdown(
     .stChatMessage {
         background-color: rgba(255, 255, 255, 0.0);  /* Hide the label */
     }
-    
+
     .stColumn {
                 text-align:center;
     }
@@ -217,9 +214,8 @@ st.markdown(
 # Title
 st.title("🦁 Chimera LLM Chat ")
 
-
-    # read_plots('prototype/figures')
-    # simulate_test_plots()
+# read_plots('prototype/figures')
+# simulate_test_plots()
 
 
 # Sidebar for File Upload and Chat
@@ -289,7 +285,7 @@ with col2:
         st.rerun()
 
 # Display the current figure
-if len(st.session_state.plots)>0:
+if len(st.session_state.plots) > 0:
     fig = st.session_state.plots[st.session_state.current_index]
     st.pyplot(fig)
 
