@@ -7,7 +7,7 @@ import re
 from openai import OpenAI
 from openai.types.beta.threads.message_create_params import Attachment, AttachmentToolFileSearch
 
-from convert_files import FileToTxtConverter
+from convert_files import Converter
 from service_messages import description, instructions, service_promt
 
 client = OpenAI(
@@ -15,11 +15,11 @@ client = OpenAI(
   organization=os.environ["ORGANIZATION"],
 )
 
-file_path = 'data/Iris.pdf'
-file = client.files.create(
-    file=open(file_path, 'rb'),
-    purpose='assistants'
-)
+# file_path = 'data/Iris.pdf'
+# file = client.files.create(
+#     file=open(file_path, 'rb'),
+#     purpose='assistants'
+# )
 
 # Create thread
 thread = client.beta.threads.create()
@@ -42,13 +42,28 @@ def get_assistant():
     )
 
 # Add your prompt here
+attr_names = ['Id','SepalLengthCm','SepalWidthCm','PetalLengthCm','PetalWidthCm','Species']
+d_types = ["int64", "float64", "flaot64", 'float64', 'float64', 'object']
+
+attr_type = []
+attributes = ""
+for i in range(len(attr_names)):
+    attr_type.append(f"{attr_names[i]} of type {d_types[i]}")
+    attributes+=f" {attr_type[i]}, "
+
+
+file_path = 'Iris.csv'
+file_format = Converter.get_format(file_path) 
+
+
+prompt = str()
+prompt += service_promt.format(attributes)
 prompt = "Create Python code to generate a scatter plot from the uploaded file. Assume it has been processed using `FileToTxtConverter.convert_to_txt(file_path)` and loaded into a DataFrame as `df`." 
-prompt += service_promt
 client.beta.threads.messages.create(
     thread_id = thread.id,
     role='user',
     content=prompt,
-    attachments=[Attachment(file_id=file.id, tools=[AttachmentToolFileSearch(type='file_search')])]
+    # attachments=[Attachment(file_id=file.id, tools=[AttachmentToolFileSearch(type='file_search')])]
 )
 
 # Run the created thread with the assistant. It will wait until the message is processed.
