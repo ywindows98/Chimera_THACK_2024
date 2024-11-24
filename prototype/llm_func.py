@@ -19,7 +19,7 @@ def use_llm(user_input):
     organization_token = os.getenv("ORGANIZATION")
     model_name = "gpt-4o"
 
-    file_path = 'current_data.csv'
+    file_path = 'user_dataset/current_data.csv'
 
     try:
         df = pd.read_csv(file_path)

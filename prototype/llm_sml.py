@@ -8,7 +8,7 @@ import json
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import os
-from llm_func import use_llm
+from main import send_query
 from convert_files import Converter
 from database import create_db, add_code_to_db
 
@@ -34,8 +34,10 @@ if "initialized" not in st.session_state:
         st.session_state.disliked = False
     if "code_added" not in st.session_state:
         st.session_state.code_added = False
+    if os.path.exists("user_dataset/current_data.csv"):
+        os.remove("user_dataset/current_data.csv")
 
-#  "👍"
+#  "Like implementation"
 def like():
     st.session_state.liked = True
     st.session_state.disliked = False
@@ -49,7 +51,7 @@ def like():
         add_code_to_db(st.session_state["query"], gpt_code)
         st.session_state.code_added = True
 
-#  "👎"
+#  "Dislike implementation"
 def dislike():
     st.session_state.liked = False
     st.session_state.disliked = True
@@ -84,38 +86,40 @@ def read_plots(folder_path):
 
 # Input handler function
 def handle_message(is_new_query: bool = True):
-    if not os.path.exists("current_data.csv"):
-        st.session_state.messages.append({"role": "bot", "content": f"Please upload a file to use an assistant"})
+    file_path = "default/default_data.csv"
+    bot_message = "Response generated!"
+    if os.path.exists("user_dataset/current_data.csv"):
+        file_path = "user_dataset/current_data.csv"
+    if is_new_query:
+        query = st.session_state["user_input"]
+        send_query(file_path=file_path, prompt=query)
+        st.session_state["query"] = ""  # Clear the previous query
+        st.session_state.code_added = False # Reset the code added flag
+
     else:
+        query = st.session_state["query"]
+        bot_message = "Figures regenerated!"
+        add_new_query = "Based on the previous request, please create a new graph with a different visualization style or perspective. Here's the original request: "
+        add_new_query += query
+        send_query(file_path=file_path, prompt=add_new_query)
+        st.session_state.code_added = False
+
+    read_plots('figures')
+    if query.strip():
+        # Add the user's message to the session state
         if is_new_query:
-            query = st.session_state["user_input"]
-            use_llm(query)
-            st.session_state["query"] = ""  # Clear the previous query
-            st.session_state.code_added = False # Reset the code added flag
-        else:
-            query = st.session_state["query"]
-            add_new_query = "Based on the previous request, please create a new graph with a different visualization style or perspective. Here's the original request: "
-            add_new_query += query
-            use_llm(add_new_query)
-            st.session_state.code_added = False
-
-        read_plots('figures')
-        if query.strip():
-            # Add the user's message to the session state
             st.session_state.messages.append({"role": "user", "content": query})
+        st.session_state.messages.append({"role": "bot", "content": bot_message})
+        # Prepare payload with optional uploaded data for potential backend
+        payload = {"query": query}
+        if st.session_state.uploaded_data is not None:
+            payload["file_data"] = st.session_state.uploaded_data
 
-            # Prepare payload with optional uploaded data for potential backend
-            payload = {"query": query}
-            if st.session_state.uploaded_data is not None:
-                payload["file_data"] = st.session_state.uploaded_data
 
-            # Mock response
-            st.session_state.messages.append({"role": "bot", "content": f"Response to: {payload['query']}"})
 
-            # Clear the input field
-            if is_new_query:
-                st.session_state["query"] = query
-                st.session_state["user_input"] = ""
+        if is_new_query:
+            st.session_state["query"] = query
+            st.session_state["user_input"] = ""
 
 
 # File upload handler
@@ -145,10 +149,10 @@ def handle_file_upload(uploaded_file):
             if file_format == 'pdf' or file_format == 'docx':
                 _ = Converter.pdf_to_txt(uploaded_file, "current_data.txt")
                 df, _, _ = Converter.file_to_dataframe("current_data.txt", "txt")
-                df.to_csv("current_data.csv", index=False)
+                df.to_csv("./user_dataset/current_data.csv", index=False)
             else:
                 df, _, _ = Converter.file_to_dataframe(file_path, file_format)
-                df.to_csv("current_data.csv", index=False)
+                df.to_csv("./user_dataset/current_data.csv", index=False)
 
             st.session_state.uploaded_data = df  # Store uploaded data in session state
             st.sidebar.success(f"File '{uploaded_file.name}' uploaded successfully!")
@@ -235,6 +239,8 @@ with st.sidebar:
     # Trigger file upload processing after the file is selected
     if uploaded_file is not None:
         handle_file_upload(uploaded_file)
+    else:
+        st.write("Custom dataset is not uploaded. A default dataset will be used.")
 
     # Chat Input Section
     st.subheader("💬 Chat")
@@ -295,7 +301,7 @@ if len(st.session_state.plots) > 0:
     fig = st.session_state.plots[st.session_state.current_index]
     st.pyplot(fig)
 
-    col3, col4, col5, _ = st.columns([1, 1, 0.5, 5])
+    col3, col4, col5, _ = st.columns([2, 1.5, 1.5, 5])
     with col3:
         # Buttons for regenerate
         if st.button("Regenerate Figures", on_click=like):
