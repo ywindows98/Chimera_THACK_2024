@@ -198,6 +198,6 @@ def send_query(file_path, prompt, model_name="gpt-4o"):
     return 1
 
 
-if __name__ == "__main__":
-    prompt = "I want to see a bar graph comparing math and writing grades as a function of parental education. And That the xlabel be sprayed at a 45 degree angle"
-    send_query(file_path="./students.csv", prompt=prompt)
+# if __name__ == "__main__":
+#     prompt = "I want to see a bar graph comparing math and writing grades as a function of parental education. And That the xlabel be sprayed at a 45 degree angle"
+#     send_query(file_path="./students.csv", prompt=prompt)

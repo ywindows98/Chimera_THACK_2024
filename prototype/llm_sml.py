@@ -8,7 +8,7 @@ import json
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import os
-from llm_func import use_llm
+from main import send_query
 
 
 if "initialized" not in st.session_state:
@@ -67,7 +67,7 @@ def handle_message():
     else:
         print("exists")
         query = st.session_state["user_input"]
-        use_llm(query)
+        send_query(file_path="current_data.csv", prompt=query)
         read_plots('figures')
         if query.strip():
             # Add the user's message to the session state
