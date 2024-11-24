@@ -1,11 +1,11 @@
 Students:
-I want to see a bar graph comparing math and writing grades as a function of parental education. And That the xlabel be sprayed at a 45 degree angle
+I want to see a bar graph comparing math and writing grades of students as a function of parental education. And That the xlabel be sprayed at a 45 degree angle
 
 CO2:
 I want to see a bar graph of co2 emissions sorted by auto manufacturer
 
 Iris:
-I want to get a visualization of all features in a 3-dimensional graph. Make a different color for each species
+I want to get a visualization of all features in iris dataset in a 3-dimensional graph. Make a different color for each species
 
 imdb:
-Show me a graph that shows the average rating of films divided by decades
+Show me a graph that shows the average rating of films on imdb divided by decades

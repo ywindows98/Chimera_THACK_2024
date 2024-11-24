@@ -164,11 +164,15 @@ def send_query(file_path, prompt, model_name="gpt-4o"):
 
         try:
             for dataset_name, dataset_path in dataset_pattern.items():
-                if re.search(dataset_name, prompt):
+                if re.search(dataset_name, prompt.lower()):
                     file_path = dataset_path
                     break
         except Exception as e:
-            raise e
+            print(e)
+            return -1
+
+    if file_path is None:
+        return -1
 
     # Create a User object with the given prompt and file path
     user = User(prompt=prompt, file_path=file_path)

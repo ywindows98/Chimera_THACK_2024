@@ -110,7 +110,8 @@ def handle_message(is_new_query: bool = True):
     if is_new_query:
         query = st.session_state["user_input"]
 
-        send_query(file_path=file_path, prompt=query)
+        if send_query(file_path=file_path, prompt=query) == -1:
+            bot_message = "Sorry, i cant find this dataset."
         st.session_state["query"] = ""  # Clear the previous query
         st.session_state.code_added = False # Reset the code added flag
 
@@ -119,7 +120,8 @@ def handle_message(is_new_query: bool = True):
         bot_message = "Figures regenerated!"
         add_new_query = "Based on the previous request, please create a new graph with a different visualization style or perspective. Here's the original request: "
         add_new_query += query
-        send_query(file_path=file_path, prompt=add_new_query)
+        if send_query(file_path=file_path, prompt=add_new_query) == -1:
+            bot_message = "Sorry, i cant find this dataset."
         st.session_state.code_added = False
 
     read_plots('figures')
