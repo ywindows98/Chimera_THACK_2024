@@ -38,6 +38,10 @@ if "initialized" not in st.session_state:
         os.remove("user_dataset/current_data.csv")
     if "default_data_name" not in st.session_state:
         st.session_state.default_data_name = "students.csv"
+    if not os.path.exists("user_dataset"):
+        os.makedirs("user_dataset")
+    if not os.path.exists("figures"):
+        os.makedirs("figures")
 
 #  "Like implementation"
 def like():
@@ -90,6 +94,7 @@ def read_plots(folder_path):
 def handle_message(is_new_query: bool = True):
     file_path = f"default/{st.session_state.default_data_name}"
     bot_message = "Response generated!"
+
     if os.path.exists("user_dataset/current_data.csv"):
         file_path = "user_dataset/current_data.csv"
     if is_new_query:

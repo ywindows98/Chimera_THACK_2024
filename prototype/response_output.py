@@ -1,34 +1,29 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
-data_frame_path = "user_dataset/current_data.csv"
-
-# Load data
+data_frame_path = "default/students.csv"
 df = pd.read_csv(data_frame_path)
 
-# Unique species
-species = df['Species'].unique()
+unique_classes = df['race_ethnicity'].unique()
+colors = plt.cm.jet(np.linspace(0, 1, len(unique_classes)))
 
-# Colors for species
-colors = plt.cm.get_cmap('viridis', len(species))(np.arange(len(species)))
-
-# Create 3D plot
-fig = plt.figure()
+fig = plt.figure(figsize=(10, 7))
 ax = fig.add_subplot(111, projection='3d')
 
-# Plot each species
-for idx, spec in enumerate(species):
-    species_data = df[df['Species'] == spec]
-    ax.scatter(species_data['SepalLengthCm'], species_data['SepalWidthCm'], species_data['PetalLengthCm'], 
-               color=colors[idx], label=spec)
+for i, unique_class in enumerate(unique_classes):
+    class_data = df[df['race_ethnicity'] == unique_class]
+    ax.scatter(class_data['math_score'], class_data['reading_score'], class_data['writing_score'],
+               color=colors[i], label=unique_class)
 
-# Labels and legend
-ax.set_xlabel('Sepal Length (cm)')
-ax.set_ylabel('Sepal Width (cm)')
-ax.set_zlabel('Petal Length (cm)')
-ax.legend(loc='best')
+ax.set_xlabel('Math Score')
+ax.set_ylabel('Reading Score')
+ax.set_zlabel('Writing Score')
+ax.legend()
 
-# Save the plot
-plt.savefig('./figures/3d_scatter_plot.png', transparent=True)
+plt.savefig('./figures/3d_plot.png', transparent=True)
+plt.show()
